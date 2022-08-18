@@ -1,0 +1,65 @@
+
+scalar Any
+
+
+directive @auth on FIELD_DEFINITION
+
+
+type User{
+    id: ID!
+    email: String!
+    password: String!
+    isActive: Boolean!
+    firstName: String!
+    lastName: String!
+    additionalName: String!
+    profileImageUrl: String!
+    backgroundImageUrl: String!
+    pronouns: String!
+    headline: String!
+    about: String!
+    country: String!
+    city: String!
+    profileLink: String!
+}
+
+type Query{
+    User(id : ID!) : User! @auth
+    Users: [User!]!
+    Login(input:InputLogin!): Any! 
+    protected: String! @auth
+}
+
+type Mutation{
+    registerUser(input: InputRegisterUser!): User! 
+    updateUser(id: ID! , input: InputUpdateUser!): User! 
+    deleteUser(id: ID!) : User!
+    activateUser(id: ID!) : User!
+}
+
+input InputLogin{
+    email: String!
+    password: String!
+}
+
+input InputRegisterUser{
+    email: String!
+    password: String!
+}
+
+input InputUpdateUser{
+    email: String!
+    password: String!
+    isActive: Boolean!
+    firstName: String!
+    lastName: String!
+    additionalName: String!
+    profileImageUrl: String!
+    backgroundImageUrl: String!
+    pronouns: String!
+    headline: String!
+    about: String!
+    country: String!
+    city: String!
+    profileLink: String!
+}
