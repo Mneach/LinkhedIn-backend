@@ -1,9 +1,10 @@
 
 scalar Any
-
+scalar Date
 
 directive @auth on FIELD_DEFINITION
-
+directive @goField(forceResolver: Boolean, name: String) on INPUT_FIELD_DEFINITION
+    | FIELD_DEFINITION
 
 type User{
     id: ID!
@@ -12,7 +13,6 @@ type User{
     isActive: Boolean!
     firstName: String!
     lastName: String!
-    additionalName: String!
     profileImageUrl: String!
     backgroundImageUrl: String!
     pronouns: String!
@@ -21,20 +21,36 @@ type User{
     country: String!
     city: String!
     profileLink: String!
+    Experiences: [Experience!]! @goField(forceResolver: true)
+    Educations: [Education!]! @goField(forceResolver: true)
+}
+
+type ActivateAccount {
+    id:String!
+    userId:ID!
+}
+
+type ResetPasswordAccount {
+    id:String!
+    userId:ID!
 }
 
 type Query{
     User(id : ID!) : User! @auth
     Users: [User!]!
+    UserByActivationId(activationId : String!) : User!
+    UserByResetPasswordId(resetPasswordId : String!) : User!
     Login(input:InputLogin!): Any! 
     protected: String! @auth
 }
 
 type Mutation{
+    # USER TABLE
     registerUser(input: InputRegisterUser!): User! 
     updateUser(id: ID! , input: InputUpdateUser!): User! 
+    updatePasswordUser(id:ID! , password:String!): User!
+    registerResetPassword(email:String!): ResetPasswordAccount!
     deleteUser(id: ID!) : User!
-    activateUser(id: ID!) : User!
 }
 
 input InputLogin{
@@ -45,6 +61,10 @@ input InputLogin{
 input InputRegisterUser{
     email: String!
     password: String!
+    firstName: String!
+    lastName: String!
+    country: String!
+    city: String!
 }
 
 input InputUpdateUser{
@@ -53,7 +73,6 @@ input InputUpdateUser{
     isActive: Boolean!
     firstName: String!
     lastName: String!
-    additionalName: String!
     profileImageUrl: String!
     backgroundImageUrl: String!
     pronouns: String!

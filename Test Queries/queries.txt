@@ -1,0 +1,176 @@
+mutation registerUser($email:String!,$password:String!,$firstName:String!,$lastName:String!,$city:String!,$country:String!){
+  registerUser(input:{email:$email , password:$password , firstName:$firstName , lastName:$lastName , city:$city , country:$country}){
+		id
+    email
+    password
+    firstName
+    lastName
+    city
+    country
+  }
+}
+
+{
+  "email":"yuda@gmail.com",
+  "password":"yuda1234",
+  "firstName":"fitra",
+  "lastName":"yuda",
+  "city":"Cibinong",
+  "country":"Indonesia"
+}
+
+query getAllUser {
+  Users {
+    id
+    email
+    password
+    firstName
+    lastName
+    city
+    country
+    Educations{
+      id
+      userId
+      school
+      degree
+      fieldStudy
+      grade
+      activities
+      description
+      MonthStartDate
+      YearStartDate
+      MonthEndDate
+      YearEndDate
+    }
+    Experiences{
+      id
+      userId
+      employmentType
+      companyName
+      country
+      city
+      isActive
+      industry
+      MonthStartDate
+      YearStartDate
+      MonthEndDate
+      YearEndDate
+    }
+  }
+}
+
+mutation addEducationUser($userId:String!,$school:String!,$degree:String!,$fieldStudy:String!,$grade:Float!,$activities:String!,$description:String!,$monthStartDate:String!,$monthEndData:String!,$yearStartDate:String!,$yearEndDate:String!){
+  addEducation(input:{
+    userId:$userId,
+    school:$school,
+    degree:$degree,
+    fieldStudy:$fieldStudy,
+    grade:$grade,
+    activities:$activities,
+    description:$description,
+    monthStartDate:$monthStartDate,
+    monthEndDate:$monthEndData,
+    yearStartDate:$yearStartDate,
+    yearEndDate:$yearEndDate,
+  }){
+      id
+      userId
+      school
+      degree
+      fieldStudy
+      grade
+      activities
+      description
+      monthStartDate
+      yearStartDate
+      monthEndDate
+      yearEndDate    
+  }
+}
+
+{
+"userId": "91d52490-4a55-4646-8997-5396ddbb1561",
+  "school": "Tester School 2",
+  "degree": "Tester Degree 2",
+  "fieldStudy": "Tester Field Study 2",
+  "grade": 5.9,
+  "activities": "Tester Activities 2",
+  "description": "Tester Description 2",
+  "monthStartDate": "February 2",
+  "monthEndData": "December 2",
+  "yearStartDate": "2025",
+  "yearEndDate": "2030"
+}
+
+mutation updateEducation($id:ID! , $userId:String!,$school:String!,$degree:String!,$fieldStudy:String!,$grade:Float!,$activities:String!,$description:String!,$monthStartDate:String!,$monthEndData:String!,$yearStartDate:String!,$yearEndDate:String!){
+  updateEducation(id:$id , input:{
+    userId:$userId,
+    school:$school,
+    degree:$degree,
+    fieldStudy:$fieldStudy,
+    grade:$grade,
+    activities:$activities,
+    description:$description,
+    monthStartDate:$monthStartDate,
+    monthEndDate:$monthEndData,
+    yearStartDate:$yearStartDate,
+    yearEndDate:$yearEndDate,
+  }){
+      id
+      userId
+      school
+      degree
+      fieldStudy
+      grade
+      activities
+      description
+      monthStartDate
+      yearStartDate
+      monthEndDate
+      yearEndDate        
+  }	
+}
+
+{
+  "id": "d32a4664-a18e-4d2f-8632-c4928fa9416b",
+  "userId": "91d52490-4a55-4646-8997-5396ddbb1561",
+  "school": "Tester updated School 2",
+  "degree": "Tester updated Degree 2",
+  "fieldStudy": "Tester updated Field Study 2",
+  "grade": 5.9,
+  "activities": "Tester updated Activities 2",
+  "description": "Tester updated Description 2",
+  "monthStartDate": "February 2",
+  "monthEndData": "December 2",
+  "yearStartDate": "2021",
+  "yearEndDate": "2026"
+}
+
+mutation addExperience($userId:ID! ,$employmentType: String!,$companyName: String!,$country: String!,$city: String!,$isActive: Boolean!,$industry: String!,$monthStartDate: String!,$monthEndDate: String!,$yearStartDate: String!,$yearEndDate: String!   ){
+  addExperience(input:{
+   userId:$userId,
+    employmentType:$employmentType,
+    companyName:$companyName,
+    country:$country,
+    city:$city,
+    isActive:$isActive,
+    industry:$industry,
+    monthStartDate:$monthStartDate,
+    monthEndDate:$monthEndDate,
+    yearStartDate:$yearStartDate,
+    yearEndDate:$yearEndDate,    
+  }){
+    id
+    userId
+    employmentType
+    companyName
+    country
+    city
+    isActive
+    industry
+    monthStartDate
+    monthEndDate
+    yearStartDate
+    yearEndDate
+  }
+}

@@ -2,14 +2,46 @@
 
 package model
 
+type InputEducation struct {
+	UserID         string  `json:"userId"`
+	School         string  `json:"school"`
+	Degree         string  `json:"degree"`
+	FieldStudy     string  `json:"fieldStudy"`
+	Grade          float64 `json:"grade"`
+	Activities     string  `json:"activities"`
+	Description    string  `json:"description"`
+	MonthStartDate string  `json:"monthStartDate"`
+	MonthEndDate   string  `json:"monthEndDate"`
+	YearStartDate  string  `json:"yearStartDate"`
+	YearEndDate    string  `json:"yearEndDate"`
+}
+
+type InputExperience struct {
+	UserID         string `json:"userId"`
+	EmploymentType string `json:"employmentType"`
+	CompanyName    string `json:"companyName"`
+	Country        string `json:"country"`
+	City           string `json:"city"`
+	IsActive       bool   `json:"isActive"`
+	Industry       string `json:"industry"`
+	MonthStartDate string `json:"monthStartDate"`
+	MonthEndDate   string `json:"monthEndDate"`
+	YearStartDate  string `json:"yearStartDate"`
+	YearEndDate    string `json:"yearEndDate"`
+}
+
 type InputLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type InputRegisterUser struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Country   string `json:"country"`
+	City      string `json:"city"`
 }
 
 type InputUpdateUser struct {
@@ -18,25 +50,6 @@ type InputUpdateUser struct {
 	IsActive           bool   `json:"isActive"`
 	FirstName          string `json:"firstName"`
 	LastName           string `json:"lastName"`
-	AdditionalName     string `json:"additionalName"`
-	ProfileImageURL    string `json:"profileImageUrl"`
-	BackgroundImageURL string `json:"backgroundImageUrl"`
-	Pronouns           string `json:"pronouns"`
-	Headline           string `json:"headline"`
-	About              string `json:"about"`
-	Country            string `json:"country"`
-	City               string `json:"city"`
-	ProfileLink        string `json:"profileLink"`
-}
-
-type User struct {
-	ID                 string `json:"id"`
-	Email              string `json:"email"`
-	Password           string `json:"password"`
-	IsActive           bool   `json:"isActive"`
-	FirstName          string `json:"firstName"`
-	LastName           string `json:"lastName"`
-	AdditionalName     string `json:"additionalName"`
 	ProfileImageURL    string `json:"profileImageUrl"`
 	BackgroundImageURL string `json:"backgroundImageUrl"`
 	Pronouns           string `json:"pronouns"`

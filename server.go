@@ -34,7 +34,13 @@ func main() {
 		panic(err)
 	}
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(
+		&model.User{},
+		&model.ActivateAccount{},
+		&model.ResetPasswordAccount{},
+		&model.Education{},
+		&model.Experience{},
+	)
 
 	router := chi.NewRouter()
 

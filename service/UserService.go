@@ -8,41 +8,69 @@ import (
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
 	"github.com/google/uuid"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+	"gorm.io/gorm"
 )
 
-func RegisterUser(ctx context.Context, input model.InputRegisterUser) (*model.User, error) {
+func RegisterUser(db *gorm.DB, ctx context.Context, input model.InputRegisterUser) (*model.User, error) {
+
+	modelUsers := new(model.User)
+
+	if err := db.Find(&modelUsers, "email = ?", input.Email).Error; err != nil {
+		return nil, err
+	}
+
+	log.Print(modelUsers)
+
+	if modelUsers.ID != "" && !modelUsers.IsActive {
+		return nil, gqlerror.Errorf("Email Already Registered And The Account Still Not Active")
+	}
+
+	if modelUsers.ID != "" {
+		return nil, gqlerror.Errorf("Email Already Registered")
+	}
+
 	modelUser := &model.User{
 		ID:                 uuid.NewString(),
 		Email:              input.Email,
 		Password:           input.Password,
 		IsActive:           false,
-		FirstName:          "",
-		LastName:           "",
-		AdditionalName:     "",
+		FirstName:          input.FirstName,
+		LastName:           input.LastName,
 		ProfileImageURL:    "",
 		BackgroundImageURL: "",
 		Pronouns:           "",
 		Headline:           "",
 		About:              "",
-		Country:            "",
-		City:               "",
+		Country:            input.Country,
+		City:               input.City,
 		ProfileLink:        "",
 	}
 
-	SendEmail(input.Email)
+	linkActivation := GenerateRandomLinkActivation()
+	SendEmailActivation(input.Email, linkActivation)
 
-	return modelUser, useDB().Create(modelUser).Error
-}
-
-func Login(ctx context.Context, input model.InputLogin) (interface{}, error) {
-	modelUser := new(model.User)
-
-	if err := useDB().Where("email = ? AND password = ?", input.Email, input.Password).Find(modelUser).Error; err != nil {
+	if err := db.Create(modelUser).Error; err != nil {
 		return nil, err
 	}
 
+	CreateActiveLink(db, ctx, modelUser.ID, linkActivation)
+
+	return modelUser, nil
+}
+
+func Login(db *gorm.DB, ctx context.Context, input model.InputLogin) (interface{}, error) {
+	modelUser := new(model.User)
+
+	if err := db.Where("email = ? AND password = ?", input.Email, input.Password).Find(modelUser).Error; err != nil {
+		return nil, err
+	}
+
+	if modelUser.ID == "" {
+		return nil, gqlerror.Errorf("Wrong Credential!")
+	}
+
 	if !modelUser.IsActive {
-		return nil, gqlerror.Errorf("your account is still not active")
+		return nil, gqlerror.Errorf("Your Account Is Still Not Active")
 	}
 
 	token, err := authentication.JwtGenerate(ctx, modelUser.ID)
@@ -56,10 +84,10 @@ func Login(ctx context.Context, input model.InputLogin) (interface{}, error) {
 	}, nil
 }
 
-func UpdateUser(ctx context.Context, id string, input model.InputUpdateUser) (*model.User, error) {
+func UpdateUser(db *gorm.DB, ctx context.Context, id string, input model.InputUpdateUser) (*model.User, error) {
 	modelUser := new(model.User)
 
-	if err := useDB().First(modelUser, "id = ?", id).Error; err != nil {
+	if err := db.First(modelUser, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -68,7 +96,6 @@ func UpdateUser(ctx context.Context, id string, input model.InputUpdateUser) (*m
 	modelUser.IsActive = input.IsActive
 	modelUser.FirstName = input.FirstName
 	modelUser.LastName = input.LastName
-	modelUser.AdditionalName = input.AdditionalName
 	modelUser.ProfileImageURL = input.ProfileImageURL
 	modelUser.BackgroundImageURL = input.BackgroundImageURL
 	modelUser.Pronouns = input.Pronouns
@@ -78,37 +105,114 @@ func UpdateUser(ctx context.Context, id string, input model.InputUpdateUser) (*m
 	modelUser.City = input.City
 	modelUser.ProfileLink = input.ProfileLink
 
-	return modelUser, useDB().Save(modelUser).Error
+	return modelUser, db.Save(modelUser).Error
 }
 
-func DeleteUser(ctx context.Context, id string) (*model.User, error) {
+func DeleteUser(db *gorm.DB, ctx context.Context, id string) (*model.User, error) {
 	modelUser := new(model.User)
 
-	if err := useDB().First(modelUser, "id = ?", id).Error; err != nil {
+	if err := db.First(modelUser, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return modelUser, useDB().Delete(modelUser).Error
+	return modelUser, db.Delete(modelUser).Error
 }
 
-func GetUser(ctx context.Context, id string) (*model.User, error) {
+func GetUser(db *gorm.DB, ctx context.Context, id string) (*model.User, error) {
 	modelUser := new(model.User)
-	return modelUser, useDB().First(modelUser, "id = ?", id).Error
+	return modelUser, db.First(modelUser, "id = ?", id).Error
 }
 
-func GetUsers(ctx context.Context) ([]*model.User, error) {
+func GetUsers(db *gorm.DB, ctx context.Context) ([]*model.User, error) {
 	var modelUsers []*model.User
-	return modelUsers, useDB().Find(&modelUsers).Error
+	return modelUsers, db.Find(&modelUsers).Error
 }
 
-func ActivateUser(ctx context.Context, id string) (*model.User, error) {
+func GetUserByActivationID(db *gorm.DB, ctx context.Context, activationID string) (*model.User, error) {
 	modelUser := new(model.User)
+	modelActivationAccount := new(model.ActivateAccount)
 
-	if err := useDB().First(modelUser, "id = ?", id).Error; err != nil {
+	if err := db.First(modelActivationAccount, "id = ?", activationID).Error; err != nil {
 		return nil, err
 	}
+
+	if err := db.First(modelUser, "id = ?", modelActivationAccount.UserID).Error; err != nil {
+		return nil, err
+	}
+
+	if modelUser.ID == "" {
+		return nil, gqlerror.Errorf("User Not Found")
+	}
+
+	ActivateUser(modelUser)
+
+	return modelUser, db.Save(modelUser).Error
+}
+
+func ActivateUser(modelUser *model.User) *model.User {
 
 	modelUser.IsActive = true
 
-	return modelUser, useDB().Save(modelUser).Error
+	return modelUser
+}
+
+func RegisterResetPassword(db *gorm.DB, ctx context.Context, email string) (*model.ResetPasswordAccount, error) {
+	modelUser := new(model.User)
+	linkResetPassword := GenerateRandomLinkActivation()
+
+	if err := db.First(modelUser, "email = ?", email).Error; err != nil {
+		return nil, gqlerror.Errorf("Email address is not linked to any account")
+	}
+
+	modelResetPassword := &model.ResetPasswordAccount{
+		ID:     linkResetPassword,
+		UserID: modelUser.ID,
+	}
+
+	SendEmailResetPassword(email, linkResetPassword)
+
+	return modelResetPassword, db.Create(modelResetPassword).Error
+}
+
+func GetUserByResetPasswordID(db *gorm.DB, ctx context.Context, resetPasswordID string) (*model.User, error) {
+	modelUser := new(model.User)
+	modelResetPasswordAccount := new(model.ResetPasswordAccount)
+
+	db.First(modelResetPasswordAccount, "id = ?", resetPasswordID)
+	db.First(modelUser, "id = ?", modelResetPasswordAccount.UserID)
+
+	if modelResetPasswordAccount.UserID == "" {
+		return nil, gqlerror.Errorf("Link Invalid")
+	}
+
+	if modelUser.ID == "" {
+		return nil, gqlerror.Errorf("User Not Found")
+	}
+
+	return modelUser, nil
+}
+
+func UpdatePasswordUser(db *gorm.DB, ctx context.Context, id string, password string) (*model.User, error) {
+	modelUser := new(model.User)
+	modelResetPasswordAccount := new(model.ResetPasswordAccount)
+
+	if err := db.First(modelUser, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if modelUser.ID == "" {
+		return nil, gqlerror.Errorf("User Not Found")
+	}
+
+	modelUser.Password = password
+
+	if err := db.First(modelResetPasswordAccount, "user_id = ?", id).Error; err != nil {
+		return nil, gqlerror.Errorf("Reset Password Data Not Found!")
+	}
+
+	if err := db.Delete(modelResetPasswordAccount).Error; err != nil {
+		return nil, err
+	}
+
+	return modelUser, db.Save(modelUser).Error
 }

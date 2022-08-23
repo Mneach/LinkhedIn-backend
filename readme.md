@@ -1,0 +1,11 @@
+Update V1.1 (23 july 2022)
+- make User , Education , Experience , Active Account , Reset Password schema
+- add fitur CRUD User
+- add fitur CRUD Education
+- add fitur CRUD Experience
+- add fitur CRUD Activation Account
+- add fitur CRUD Reset Password
+- make relation One To One User - Reset Password | User - Activation
+- make relation One To Many User - Education | User - Experience
+- add fitur send email
+- add generateLink function
