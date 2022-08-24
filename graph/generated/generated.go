@@ -102,6 +102,7 @@ type ComplexityRoot struct {
 		Protected             func(childComplexity int) int
 		User                  func(childComplexity int, id string) int
 		UserByActivationID    func(childComplexity int, activationID string) int
+		UserByEmail           func(childComplexity int, email string) int
 		UserByResetPasswordID func(childComplexity int, resetPasswordID string) int
 		Users                 func(childComplexity int) int
 	}
@@ -147,6 +148,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*model.User, error)
 	Users(ctx context.Context) ([]*model.User, error)
+	UserByEmail(ctx context.Context, email string) (*model.User, error)
 	UserByActivationID(ctx context.Context, activationID string) (*model.User, error)
 	UserByResetPasswordID(ctx context.Context, resetPasswordID string) (*model.User, error)
 	Login(ctx context.Context, input model.InputLogin) (interface{}, error)
@@ -545,6 +547,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.UserByActivationID(childComplexity, args["activationId"].(string)), true
 
+	case "Query.UserByEmail":
+		if e.complexity.Query.UserByEmail == nil {
+			break
+		}
+
+		args, err := ec.field_Query_UserByEmail_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserByEmail(childComplexity, args["email"].(string)), true
+
 	case "Query.UserByResetPasswordId":
 		if e.complexity.Query.UserByResetPasswordID == nil {
 			break
@@ -770,7 +784,7 @@ type Education {
     school: String!
     degree: String!
     fieldStudy: String!
-    grade: Float!
+    grade: String!
     activities: String!
     description: String!
     monthStartDate: String!
@@ -795,7 +809,7 @@ input InputEducation {
     school: String!
     degree: String!
     fieldStudy: String!
-    grade: Float!
+    grade: String!
     activities: String!
     description: String!    
     monthStartDate: String!
@@ -882,6 +896,7 @@ type ResetPasswordAccount {
 type Query{
     User(id : ID!) : User! @auth
     Users: [User!]!
+    UserByEmail(email: String!) : User!
     UserByActivationId(activationId : String!) : User!
     UserByResetPasswordId(resetPasswordId : String!) : User!
     Login(input:InputLogin!): Any! 
@@ -909,6 +924,7 @@ input InputRegisterUser{
     lastName: String!
     country: String!
     city: String!
+    profileImageUrl: String!
 }
 
 input InputUpdateUser{
@@ -1162,6 +1178,21 @@ func (ec *executionContext) field_Query_UserByActivationId_args(ctx context.Cont
 		}
 	}
 	args["activationId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_UserByEmail_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["email"] = arg0
 	return args, nil
 }
 
@@ -1582,9 +1613,9 @@ func (ec *executionContext) _Education_grade(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(float64)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Education_grade(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1594,7 +1625,7 @@ func (ec *executionContext) fieldContext_Education_grade(ctx context.Context, fi
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Float does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3478,6 +3509,95 @@ func (ec *executionContext) fieldContext_Query_Users(ctx context.Context, field 
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_UserByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_UserByEmail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserByEmail(rctx, fc.Args["email"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋMneachDevᚋLinkhedInᚑbackendᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_UserByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "password":
+				return ec.fieldContext_User_password(ctx, field)
+			case "isActive":
+				return ec.fieldContext_User_isActive(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "profileImageUrl":
+				return ec.fieldContext_User_profileImageUrl(ctx, field)
+			case "backgroundImageUrl":
+				return ec.fieldContext_User_backgroundImageUrl(ctx, field)
+			case "pronouns":
+				return ec.fieldContext_User_pronouns(ctx, field)
+			case "headline":
+				return ec.fieldContext_User_headline(ctx, field)
+			case "about":
+				return ec.fieldContext_User_about(ctx, field)
+			case "country":
+				return ec.fieldContext_User_country(ctx, field)
+			case "city":
+				return ec.fieldContext_User_city(ctx, field)
+			case "profileLink":
+				return ec.fieldContext_User_profileLink(ctx, field)
+			case "Experiences":
+				return ec.fieldContext_User_Experiences(ctx, field)
+			case "Educations":
+				return ec.fieldContext_User_Educations(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_UserByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -6715,7 +6835,7 @@ func (ec *executionContext) unmarshalInputInputEducation(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("grade"))
-			it.Grade, err = ec.unmarshalNFloat2float64(ctx, v)
+			it.Grade, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6924,7 +7044,7 @@ func (ec *executionContext) unmarshalInputInputRegisterUser(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "password", "firstName", "lastName", "country", "city"}
+	fieldsInOrder := [...]string{"email", "password", "firstName", "lastName", "country", "city", "profileImageUrl"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6976,6 +7096,14 @@ func (ec *executionContext) unmarshalInputInputRegisterUser(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("city"))
 			it.City, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "profileImageUrl":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileImageUrl"))
+			it.ProfileImageURL, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7543,6 +7671,29 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_Users(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "UserByEmail":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_UserByEmail(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -8379,21 +8530,6 @@ func (ec *executionContext) marshalNExperience2ᚖgithubᚗcomᚋMneachDevᚋLin
 		return graphql.Null
 	}
 	return ec._Experience(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v interface{}) (float64, error) {
-	res, err := graphql.UnmarshalFloatContext(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
-	res := graphql.MarshalFloatContext(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

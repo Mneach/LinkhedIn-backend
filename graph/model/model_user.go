@@ -22,36 +22,6 @@ type User struct {
 	Educations           []*Education         `json:"Educations" gorm:"foreignKey:UserID"`
 }
 
-type Education struct {
-	ID             string  `json:"id" gorm:"type:varchar(191)"`
-	UserID         string  `json:"userId"`
-	School         string  `json:"school"`
-	Degree         string  `json:"degree"`
-	FieldStudy     string  `json:"fieldStudy"`
-	Grade          float64 `json:"grade"`
-	Activities     string  `json:"activities"`
-	Description    string  `json:"description"`
-	MonthStartDate string  `json:"monthStartDate"`
-	MonthEndDate   string  `json:"monthEndDate"`
-	YearStartDate  string  `json:"yearStartDate"`
-	YearEndDate    string  `json:"yearEndDate"`
-}
-
-type Experience struct {
-	ID             string `json:"id" gorm:"type:varchar(191)"`
-	UserID         string `json:"userId"`
-	EmploymentType string `json:"employmentType"`
-	CompanyName    string `json:"companyName"`
-	Country        string `json:"country"`
-	City           string `json:"city"`
-	IsActive       bool   `json:"isActive"`
-	Industry       string `json:"industry"`
-	MonthStartDate string `json:"monthStartDate"`
-	MonthEndDate   string `json:"monthEndDate"`
-	YearStartDate  string `json:"yearStartDate"`
-	YearEndDate    string `json:"yearEndDate"`
-}
-
 type ActivateAccount struct {
 	ID     string `json:"id"`
 	UserID string `json:"userId"`

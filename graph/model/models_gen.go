@@ -3,17 +3,17 @@
 package model
 
 type InputEducation struct {
-	UserID         string  `json:"userId"`
-	School         string  `json:"school"`
-	Degree         string  `json:"degree"`
-	FieldStudy     string  `json:"fieldStudy"`
-	Grade          float64 `json:"grade"`
-	Activities     string  `json:"activities"`
-	Description    string  `json:"description"`
-	MonthStartDate string  `json:"monthStartDate"`
-	MonthEndDate   string  `json:"monthEndDate"`
-	YearStartDate  string  `json:"yearStartDate"`
-	YearEndDate    string  `json:"yearEndDate"`
+	UserID         string `json:"userId"`
+	School         string `json:"school"`
+	Degree         string `json:"degree"`
+	FieldStudy     string `json:"fieldStudy"`
+	Grade          string `json:"grade"`
+	Activities     string `json:"activities"`
+	Description    string `json:"description"`
+	MonthStartDate string `json:"monthStartDate"`
+	MonthEndDate   string `json:"monthEndDate"`
+	YearStartDate  string `json:"yearStartDate"`
+	YearEndDate    string `json:"yearEndDate"`
 }
 
 type InputExperience struct {
@@ -36,12 +36,13 @@ type InputLogin struct {
 }
 
 type InputRegisterUser struct {
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Country   string `json:"country"`
-	City      string `json:"city"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	FirstName       string `json:"firstName"`
+	LastName        string `json:"lastName"`
+	Country         string `json:"country"`
+	City            string `json:"city"`
+	ProfileImageURL string `json:"profileImageUrl"`
 }
 
 type InputUpdateUser struct {

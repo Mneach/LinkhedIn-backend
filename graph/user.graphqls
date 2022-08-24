@@ -38,6 +38,7 @@ type ResetPasswordAccount {
 type Query{
     User(id : ID!) : User! @auth
     Users: [User!]!
+    UserByEmail(email: String!) : User!
     UserByActivationId(activationId : String!) : User!
     UserByResetPasswordId(resetPasswordId : String!) : User!
     Login(input:InputLogin!): Any! 
@@ -65,6 +66,7 @@ input InputRegisterUser{
     lastName: String!
     country: String!
     city: String!
+    profileImageUrl: String!
 }
 
 input InputUpdateUser{

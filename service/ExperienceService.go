@@ -18,6 +18,7 @@ func GetExperienceUser(db *gorm.DB, ctx context.Context, obj *model.User) ([]*mo
 }
 
 func AddExperience(db *gorm.DB, ctx context.Context, input model.InputExperience) (*model.Experience, error) {
+	log.Print(input.UserID)
 	modelExperience := &model.Experience{
 		ID:             uuid.NewString(),
 		UserID:         input.UserID,
@@ -25,7 +26,7 @@ func AddExperience(db *gorm.DB, ctx context.Context, input model.InputExperience
 		CompanyName:    input.CompanyName,
 		Country:        input.Country,
 		City:           input.City,
-		IsActive:       false,
+		IsActive:       input.IsActive,
 		Industry:       input.Industry,
 		MonthStartDate: input.MonthStartDate,
 		MonthEndDate:   input.MonthEndDate,

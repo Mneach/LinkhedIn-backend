@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/MneachDev/LinkhedIn-backend/graph/generated"
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
@@ -45,6 +44,11 @@ func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error
 // Users is the resolver for the Users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return service.GetUsers(r.DB, ctx)
+}
+
+// UserByEmail is the resolver for the UserByEmail field.
+func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
+	return service.GetUserByEmail(r.DB, ctx, email)
 }
 
 // UserByActivationID is the resolver for the UserByActivationId field.
@@ -89,16 +93,3 @@ func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) AddUserEducation(ctx context.Context, userID string, educationID string) (interface{}, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-func (r *mutationResolver) AddUserExperience(ctx context.Context, userID string, experienceID string) (interface{}, error) {
-	panic(fmt.Errorf("not implemented"))
-}

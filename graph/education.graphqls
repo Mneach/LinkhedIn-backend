@@ -5,7 +5,7 @@ type Education {
     school: String!
     degree: String!
     fieldStudy: String!
-    grade: Float!
+    grade: String!
     activities: String!
     description: String!
     monthStartDate: String!
@@ -30,7 +30,7 @@ input InputEducation {
     school: String!
     degree: String!
     fieldStudy: String!
-    grade: Float!
+    grade: String!
     activities: String!
     description: String!    
     monthStartDate: String!

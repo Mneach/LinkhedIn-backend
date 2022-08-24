@@ -36,7 +36,7 @@ func RegisterUser(db *gorm.DB, ctx context.Context, input model.InputRegisterUse
 		IsActive:           false,
 		FirstName:          input.FirstName,
 		LastName:           input.LastName,
-		ProfileImageURL:    "",
+		ProfileImageURL:    input.ProfileImageURL,
 		BackgroundImageURL: "",
 		Pronouns:           "",
 		Headline:           "",
@@ -187,6 +187,22 @@ func GetUserByResetPasswordID(db *gorm.DB, ctx context.Context, resetPasswordID 
 
 	if modelUser.ID == "" {
 		return nil, gqlerror.Errorf("User Not Found")
+	}
+
+	return modelUser, nil
+}
+
+func GetUserByEmail(db *gorm.DB, ctx context.Context, email string) (*model.User, error) {
+	modelUser := new(model.User)
+
+	db.First(modelUser, "email = ?", email)
+
+	if modelUser.ID != "" && !modelUser.IsActive {
+		return nil, gqlerror.Errorf("Email Already Registered And The Account Still Not Active")
+	}
+
+	if modelUser.ID != "" {
+		return nil, gqlerror.Errorf("Email Already Registered")
 	}
 
 	return modelUser, nil

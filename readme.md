@@ -10,3 +10,6 @@ Update V1.1 (23 july 2022)
 - make system service , user service , education service , experience service
 - add fitur send email
 - add generateLink function
+
+Update V1.2 (24 July 2022)
+- Fix mutation education and experience
