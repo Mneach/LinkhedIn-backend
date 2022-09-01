@@ -19,8 +19,6 @@ func RegisterUser(db *gorm.DB, ctx context.Context, input model.InputRegisterUse
 		return nil, err
 	}
 
-	log.Print(modelUsers)
-
 	if modelUsers.ID != "" && !modelUsers.IsActive {
 		return nil, gqlerror.Errorf("Email Already Registered And The Account Still Not Active")
 	}
@@ -91,6 +89,9 @@ func UpdateUser(db *gorm.DB, ctx context.Context, id string, input model.InputUp
 		return nil, err
 	}
 
+	log.Print(input.Email)
+	log.Print(input.BackgroundImageURL)
+
 	modelUser.Email = input.Email
 	modelUser.Password = input.Password
 	modelUser.IsActive = input.IsActive
@@ -104,6 +105,8 @@ func UpdateUser(db *gorm.DB, ctx context.Context, id string, input model.InputUp
 	modelUser.Country = input.Country
 	modelUser.City = input.City
 	modelUser.ProfileLink = input.ProfileLink
+
+	log.Print(modelUser)
 
 	return modelUser, db.Save(modelUser).Error
 }
@@ -195,6 +198,20 @@ func GetUserByResetPasswordID(db *gorm.DB, ctx context.Context, resetPasswordID 
 func GetUserByEmail(db *gorm.DB, ctx context.Context, email string) (*model.User, error) {
 	modelUser := new(model.User)
 
+	if err := db.First(modelUser, "email = ?", email).Error; err != nil {
+		return nil, err
+	}
+
+	if modelUser.ID != "" && !modelUser.IsActive {
+		return nil, gqlerror.Errorf("Email Already Registered And The Account Still Not Active")
+	}
+
+	return modelUser, nil
+}
+
+func CheckEmailUser(db *gorm.DB, ctx context.Context, email string) (*model.User, error) {
+	modelUser := new(model.User)
+
 	db.First(modelUser, "email = ?", email)
 
 	if modelUser.ID != "" && !modelUser.IsActive {
@@ -206,6 +223,7 @@ func GetUserByEmail(db *gorm.DB, ctx context.Context, email string) (*model.User
 	}
 
 	return modelUser, nil
+
 }
 
 func UpdatePasswordUser(db *gorm.DB, ctx context.Context, id string, password string) (*model.User, error) {
@@ -231,4 +249,87 @@ func UpdatePasswordUser(db *gorm.DB, ctx context.Context, id string, password st
 	}
 
 	return modelUser, db.Save(modelUser).Error
+}
+
+func GetVisits(db *gorm.DB, ctx context.Context, obj *model.User) ([]*model.Visit, error) {
+	var modelVisits []*model.Visit
+
+	return modelVisits, db.Table("user_visits").Find(&modelVisits, "visit_id = ?", obj.ID).Error
+}
+
+func GetFollows(db *gorm.DB, ctx context.Context, obj *model.User) ([]*model.Follow, error) {
+	var modelFollow []*model.Follow
+
+	return modelFollow, db.Table("user_follows").Find(&modelFollow, "follow_id = ? ", obj.ID).Error
+}
+
+func VisitUser(db *gorm.DB, ctx context.Context, id1 string, id2 string) (interface{}, error) {
+	modelVisit := new(model.Visit)
+
+	db.Table("user_visits").First(&modelVisit, "user_id = ? AND visit_id = ?", id1, id2)
+
+	if modelVisit.UserID != "" {
+		var modelVisits []*model.Visit
+		db.Table("user_visits").Find(&modelVisits, "visit_id = ?", id2)
+
+		return map[string]interface{}{
+			"length": len(modelVisits),
+		}, nil
+	} else {
+
+		modelVisit.UserID = id1
+		modelVisit.VisitID = id2
+
+		db.Table("user_visits").Create(modelVisit)
+
+		var modelVisits []*model.Visit
+		db.Table("user_visits").Find(&modelVisits, "visit_id = ?", id2)
+
+		return map[string]interface{}{
+			"length": len(modelVisits),
+		}, nil
+	}
+}
+
+func FollowUser(db *gorm.DB, ctx context.Context, id1 string, id2 string) (interface{}, error) {
+	modelFollow := new(model.Follow)
+
+	modelFollow.UserID = id1
+	modelFollow.FollowID = id2
+
+	db.Table("user_follows").Create(modelFollow)
+
+	var modelFollows []*model.Follow
+	db.Table("user_follows").Find(&modelFollows, "follow_id = ?", id2)
+
+	return map[string]interface{}{
+		"length": len(modelFollows),
+	}, nil
+
+}
+
+func UnFollowUser(db *gorm.DB, ctx context.Context, id1 string, id2 string) (interface{}, error) {
+	modelFollow := new(model.Follow)
+
+	if err := db.Table("user_follows").First(&modelFollow, "user_id = ? AND follow_id = ?", id1, id2).Error; err != nil {
+		return nil, err
+	}
+
+	if modelFollow.UserID == "" {
+		var modelFollows []*model.Follow
+		db.Table("user_follows").Find(&modelFollows, "follow_id = ?", id2)
+
+		return map[string]interface{}{
+			"length": len(modelFollows),
+		}, nil
+	} else {
+		db.Table("user_follows").Delete(&modelFollow, "user_id = ? AND follow_id = ?", id1, id2)
+
+		var modelFollows []*model.Follow
+		db.Table("user_follows").Find(&modelFollows, "follow_id = ?", id2)
+
+		return map[string]interface{}{
+			"length": len(modelFollows),
+		}, nil
+	}
 }

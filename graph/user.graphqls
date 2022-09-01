@@ -21,8 +21,10 @@ type User{
     country: String!
     city: String!
     profileLink: String!
+    Visits: [Visit!]! @goField(forceResolver: true)
+    Follows: [Follow!]! @goField(forceResolver: true)
     Experiences: [Experience!]! @goField(forceResolver: true)
-    Educations: [Education!]! @goField(forceResolver: true)
+    Educations: [Education!]! @goField(forceResolver: true) 
 }
 
 type ActivateAccount {
@@ -35,10 +37,21 @@ type ResetPasswordAccount {
     userId:ID!
 }
 
+type Visit {
+    userId:ID!
+    visitId:ID!
+}
+
+type Follow{
+    userId:ID!
+    followId:ID!
+}
+
 type Query{
-    User(id : ID!) : User! @auth
+    User(id : ID!) : User! 
     Users: [User!]!
     UserByEmail(email: String!) : User!
+    CheckEmailUser(email: String!) : User!
     UserByActivationId(activationId : String!) : User!
     UserByResetPasswordId(resetPasswordId : String!) : User!
     Login(input:InputLogin!): Any! 
@@ -52,6 +65,11 @@ type Mutation{
     updatePasswordUser(id:ID! , password:String!): User!
     registerResetPassword(email:String!): ResetPasswordAccount!
     deleteUser(id: ID!) : User!
+
+    FollowUser(id1: ID!, id2: ID!): Any!  @auth
+    UnFollowUser(id1: ID!, id2: ID!): Any!  @auth
+
+    VisitUser(id1: ID!, id2: ID!): Any!  @auth
 }
 
 input InputLogin{

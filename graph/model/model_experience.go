@@ -3,6 +3,7 @@ package model
 type Experience struct {
 	ID             string `json:"id" gorm:"type:varchar(191)"`
 	UserID         string `json:"userId"`
+	Title          string `json:"title"`
 	EmploymentType string `json:"employmentType"`
 	CompanyName    string `json:"companyName"`
 	Country        string `json:"country"`

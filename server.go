@@ -27,7 +27,7 @@ func main() {
 		port = defaultPort
 	}
 
-	dsn := "host=localhost user=postgres password=admin dbname=LinkhedIn port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "host=localhost user=postgres password=mysecretpassword dbname=LinkhedIn port=12345 sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -40,6 +40,7 @@ func main() {
 		&model.ResetPasswordAccount{},
 		&model.Education{},
 		&model.Experience{},
+		&model.Post{},
 	)
 
 	router := chi.NewRouter()

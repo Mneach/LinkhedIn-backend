@@ -21,6 +21,7 @@ func AddExperience(db *gorm.DB, ctx context.Context, input model.InputExperience
 	log.Print(input.UserID)
 	modelExperience := &model.Experience{
 		ID:             uuid.NewString(),
+		Title:          input.Title,
 		UserID:         input.UserID,
 		EmploymentType: input.EmploymentType,
 		CompanyName:    input.CompanyName,
@@ -62,6 +63,10 @@ func UpdateExperience(db *gorm.DB, ctx context.Context, id string, input model.I
 // DeleteExperience is the resolver for the deleteExperience field.
 func DeleteExperience(db *gorm.DB, ctx context.Context, id string) (*model.Experience, error) {
 	modelExperience := new(model.Experience)
+
+	if err := db.First(modelExperience, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
 
 	return modelExperience, db.Delete(modelExperience).Error
 }

@@ -13,3 +13,5 @@ Update V1.1 (23 july 2022)
 
 Update V1.2 (24 July 2022)
 - Fix mutation education and experience
+
+Update V1.3 (01 September 2022)

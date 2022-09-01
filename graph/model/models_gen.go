@@ -18,6 +18,7 @@ type InputEducation struct {
 
 type InputExperience struct {
 	UserID         string `json:"userId"`
+	Title          string `json:"title"`
 	EmploymentType string `json:"employmentType"`
 	CompanyName    string `json:"companyName"`
 	Country        string `json:"country"`
@@ -33,6 +34,13 @@ type InputExperience struct {
 type InputLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type InputPost struct {
+	SenderID string `json:"senderId"`
+	Text     string `json:"text"`
+	PhotoURL string `json:"photoUrl"`
+	VideoURL string `json:"videoUrl"`
 }
 
 type InputRegisterUser struct {
@@ -59,4 +67,9 @@ type InputUpdateUser struct {
 	Country            string `json:"country"`
 	City               string `json:"city"`
 	ProfileLink        string `json:"profileLink"`
+}
+
+type Search struct {
+	Users []*User `json:"Users"`
+	Posts []*Post `json:"Posts"`
 }

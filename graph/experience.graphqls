@@ -2,6 +2,7 @@
 type Experience {
     id: ID!
     userId: ID!    
+    title: String!
     employmentType: String!
     companyName: String!
     country: String!
@@ -26,6 +27,7 @@ extend type Mutation{
 
 input InputExperience {
     userId: ID!    
+    title: String!
     employmentType: String!
     companyName: String!
     country: String!

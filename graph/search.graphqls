@@ -1,0 +1,11 @@
+
+type Search{
+  Users : [User!]! @goField(forceResolver: true)
+  Posts : [Post!]! @goField(forceResolver: true)
+}
+
+
+
+extend type Query{
+  Search(Keyword : String!, Limit:Int!, Offset:Int!) : Search!  @auth
+}

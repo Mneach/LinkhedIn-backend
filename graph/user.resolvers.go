@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/MneachDev/LinkhedIn-backend/graph/generated"
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
@@ -36,6 +37,21 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*model.Us
 	return service.DeleteUser(r.DB, ctx, id)
 }
 
+// FollowUser is the resolver for the FollowUser field.
+func (r *mutationResolver) FollowUser(ctx context.Context, id1 string, id2 string) (interface{}, error) {
+	return service.FollowUser(r.DB, ctx, id1, id2)
+}
+
+// UnFollowUser is the resolver for the UnFollowUser field.
+func (r *mutationResolver) UnFollowUser(ctx context.Context, id1 string, id2 string) (interface{}, error) {
+	return service.UnFollowUser(r.DB, ctx, id1, id2)
+}
+
+// VisitUser is the resolver for the VisitUser field.
+func (r *mutationResolver) VisitUser(ctx context.Context, id1 string, id2 string) (interface{}, error) {
+	return service.VisitUser(r.DB, ctx, id1, id2)
+}
+
 // User is the resolver for the User field.
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	return service.GetUser(r.DB, ctx, id)
@@ -49,6 +65,11 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 // UserByEmail is the resolver for the UserByEmail field.
 func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
 	return service.GetUserByEmail(r.DB, ctx, email)
+}
+
+// CheckEmailUser is the resolver for the CheckEmailUser field.
+func (r *queryResolver) CheckEmailUser(ctx context.Context, email string) (*model.User, error) {
+	return service.CheckEmailUser(r.DB, ctx, email)
 }
 
 // UserByActivationID is the resolver for the UserByActivationId field.
@@ -69,6 +90,26 @@ func (r *queryResolver) Login(ctx context.Context, input model.InputLogin) (inte
 // Protected is the resolver for the protected field.
 func (r *queryResolver) Protected(ctx context.Context) (string, error) {
 	return "SUCCESS", nil
+}
+
+// Visits is the resolver for the Visits field.
+func (r *userResolver) Visits(ctx context.Context, obj *model.User) ([]*model.Visit, error) {
+	return service.GetVisits(r.DB, ctx, obj)
+}
+
+// Follows is the resolver for the Follows field.
+func (r *userResolver) Follows(ctx context.Context, obj *model.User) ([]*model.Follow, error) {
+	return service.GetFollows(r.DB, ctx, obj)
+}
+
+// UserConnection is the resolver for the UserConnection field.
+func (r *userResolver) UserConnection(ctx context.Context, obj *model.User) ([]string, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+// UserRequestConnect is the resolver for the UserRequestConnect field.
+func (r *userResolver) UserRequestConnect(ctx context.Context, obj *model.User) ([]string, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Experiences is the resolver for the Experiences field.
