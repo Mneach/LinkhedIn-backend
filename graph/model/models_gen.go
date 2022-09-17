@@ -2,6 +2,30 @@
 
 package model
 
+import (
+	"time"
+)
+
+type Block struct {
+	UserID  string `json:"userId"`
+	BlockID string `json:"blockId"`
+}
+
+type CreateJob struct {
+	Title          string `json:"title"`
+	CompanyName    string `json:"companyName"`
+	Workplace      string `json:"workplace"`
+	City           string `json:"city"`
+	Country        string `json:"country"`
+	EmploymentType string `json:"employmentType"`
+	Description    string `json:"description"`
+}
+
+type Hastag struct {
+	ID     string `json:"id"`
+	Hastag string `json:"hastag"`
+}
+
 type InputEducation struct {
 	UserID         string `json:"userId"`
 	School         string `json:"school"`
@@ -67,6 +91,18 @@ type InputUpdateUser struct {
 	Country            string `json:"country"`
 	City               string `json:"city"`
 	ProfileLink        string `json:"profileLink"`
+}
+
+type Job struct {
+	ID             string    `json:"id"`
+	Title          string    `json:"title"`
+	CompanyName    string    `json:"companyName"`
+	Workplace      string    `json:"workplace"`
+	City           string    `json:"city"`
+	Country        string    `json:"country"`
+	EmploymentType string    `json:"employmentType"`
+	Description    string    `json:"description"`
+	CreatedAt      time.Time `json:"createdAt"`
 }
 
 type Search struct {

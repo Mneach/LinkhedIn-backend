@@ -14,4 +14,12 @@ Update V1.1 (23 july 2022)
 Update V1.2 (24 July 2022)
 - Fix mutation education and experience
 
-Update V1.3 (01 September 2022)
+Update V1.6 (17 September 2022)
+- Add Fitur CRUD Comment
+- Add FItur CRUD Post
+- Add Like Comment and Reply
+- Add Rich Text and auto Complete
+- Add User You Might Know
+- Add CR Fitur Jobs
+- Add Hastag Table
+- Add CR Fitur Notification(Visit , Follow , Unfollow , Create Post , Comment Post, Reply Comment , Like Post , Like Reply)

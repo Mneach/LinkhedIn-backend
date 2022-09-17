@@ -36,6 +36,11 @@ func (r *postResolver) Likes(ctx context.Context, obj *model.Post) ([]*model.Lik
 	return service.GetLikes(r.DB, ctx, obj)
 }
 
+// Comments is the resolver for the Comments field.
+func (r *postResolver) Comments(ctx context.Context, obj *model.Post) ([]*model.Comment, error) {
+	return service.GetComments(r.DB, ctx, obj)
+}
+
 // Posts is the resolver for the Posts field.
 func (r *queryResolver) Posts(ctx context.Context, limit int, offset int) ([]*model.Post, error) {
 	return service.GetPosts(r.DB, ctx, limit, offset)

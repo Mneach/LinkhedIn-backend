@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/MneachDev/LinkhedIn-backend/authentication"
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
 	"github.com/samber/lo"
 	"gopkg.in/gomail.v2"
@@ -16,8 +17,6 @@ import (
 func SendEmailActivation(ToMail string, linkActivation string) {
 
 	link := linkActivation
-
-	log.Print(linkActivation)
 
 	msg := gomail.NewMessage()
 	msg.SetHeader("From", "MneachDev@gmail.com")
@@ -79,11 +78,12 @@ func CreateActiveLink(db *gorm.DB, ctx context.Context, userID string, linkActiv
 func Search(db *gorm.DB, ctx context.Context, keyword string, limit int, offset int) (*model.Search, error) {
 	search := new(model.Search)
 
+	userID := authentication.GetJwtValueData(ctx).Userid
 	var modelUsers []*model.User
 	var modelPosts []*model.Post
 
 	// SEARCH USER BY KEYWORD
-	if err := db.Limit(limit).Offset(offset).Find(&modelUsers, "concat(first_name, last_name) like ?", "%"+keyword+"%").Error; err != nil {
+	if err := db.Limit(limit).Offset(offset).Not("id = ?", userID).Find(&modelUsers, "concat(first_name, last_name) like ?", "%"+keyword+"%").Error; err != nil {
 		return nil, err
 	}
 
@@ -94,6 +94,22 @@ func Search(db *gorm.DB, ctx context.Context, keyword string, limit int, offset 
 	}
 
 	search.Users = modelUsers
+	search.Posts = modelPosts
+
+	return search, nil
+}
+
+func SearchHastag(db *gorm.DB, ctx context.Context, keyword string, limit int, offset int) (*model.Search, error) {
+	search := new(model.Search)
+
+	var modelPosts []*model.Post
+
+	// SEARCH POSTS BY KEYWOARD
+
+	if err := db.Limit(limit).Offset(offset).Find(&modelPosts, "text like ? ", "%#"+keyword+"%").Error; err != nil {
+		return nil, err
+	}
+
 	search.Posts = modelPosts
 
 	return search, nil

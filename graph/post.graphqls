@@ -1,10 +1,14 @@
+scalar Time
+
 type Post{
     id: ID!
     text: String!
     photoUrl: String!
     videoUrl: String!
+    createdAt: Time!
     Sender: User! @goField(forceResolver: true)
     Likes: [LikePosts!]! @goField(forceResolver: true)
+    Comments: [Comment!]! @goField(forceResolver: true)
 }
 
 type LikePosts {

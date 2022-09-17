@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/MneachDev/LinkhedIn-backend/graph/generated"
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
@@ -62,6 +61,11 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	return service.GetUsers(r.DB, ctx)
 }
 
+// UserSuggestion is the resolver for the UserSuggestion field.
+func (r *queryResolver) UserSuggestion(ctx context.Context, userID string) ([]*model.User, error) {
+	return service.GetUserSuggestion(r.DB, ctx, userID)
+}
+
 // UserByEmail is the resolver for the UserByEmail field.
 func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
 	return service.GetUserByEmail(r.DB, ctx, email)
@@ -102,14 +106,19 @@ func (r *userResolver) Follows(ctx context.Context, obj *model.User) ([]*model.F
 	return service.GetFollows(r.DB, ctx, obj)
 }
 
-// UserConnection is the resolver for the UserConnection field.
-func (r *userResolver) UserConnection(ctx context.Context, obj *model.User) ([]string, error) {
-	panic(fmt.Errorf("not implemented"))
+// Blocks is the resolver for the Blocks field.
+func (r *userResolver) Blocks(ctx context.Context, obj *model.User) ([]*model.Block, error) {
+	return service.GetBlocks(r.DB, ctx, obj)
 }
 
-// UserRequestConnect is the resolver for the UserRequestConnect field.
-func (r *userResolver) UserRequestConnect(ctx context.Context, obj *model.User) ([]string, error) {
-	panic(fmt.Errorf("not implemented"))
+// Connections is the resolver for the Connections field.
+func (r *userResolver) Connections(ctx context.Context, obj *model.User) ([]*model.Connection, error) {
+	return service.GetConnections(r.DB, ctx, obj)
+}
+
+// ConnectRequests is the resolver for the ConnectRequests field.
+func (r *userResolver) ConnectRequests(ctx context.Context, obj *model.User) ([]*model.ConnectRequest, error) {
+	return service.GetConnectRequests(r.DB, ctx, obj)
 }
 
 // Experiences is the resolver for the Experiences field.

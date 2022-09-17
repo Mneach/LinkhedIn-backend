@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"log"
 
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
 	"github.com/google/uuid"
@@ -12,13 +11,10 @@ import (
 func GetExperienceUser(db *gorm.DB, ctx context.Context, obj *model.User) ([]*model.Experience, error) {
 	var modelExperiences []*model.Experience
 
-	log.Print(obj)
-
 	return modelExperiences, db.Where("user_id = ?", obj.ID).Find(&modelExperiences).Error
 }
 
 func AddExperience(db *gorm.DB, ctx context.Context, input model.InputExperience) (*model.Experience, error) {
-	log.Print(input.UserID)
 	modelExperience := &model.Experience{
 		ID:             uuid.NewString(),
 		Title:          input.Title,

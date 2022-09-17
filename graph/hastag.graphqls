@@ -1,0 +1,12 @@
+type Hastag{
+    id:ID!
+    hastag:String!
+}
+
+extend type Query {
+    Hastags: [Hastag!]!
+}
+
+extend type Mutation {
+    addHastag(hastag:String!) : Hastag!
+}

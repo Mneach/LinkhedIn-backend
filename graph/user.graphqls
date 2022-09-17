@@ -23,6 +23,9 @@ type User{
     profileLink: String!
     Visits: [Visit!]! @goField(forceResolver: true)
     Follows: [Follow!]! @goField(forceResolver: true)
+    Blocks: [Block!] @goField(forceResolver: true)
+    Connections: [Connection!]! @goField(forceResolver: true)
+    ConnectRequests: [ConnectRequest!]! @goField(forceResolver: true)
     Experiences: [Experience!]! @goField(forceResolver: true)
     Educations: [Education!]! @goField(forceResolver: true) 
 }
@@ -50,6 +53,7 @@ type Follow{
 type Query{
     User(id : ID!) : User! 
     Users: [User!]!
+    UserSuggestion(userId: ID!) : [User!]!
     UserByEmail(email: String!) : User!
     CheckEmailUser(email: String!) : User!
     UserByActivationId(activationId : String!) : User!
@@ -70,6 +74,8 @@ type Mutation{
     UnFollowUser(id1: ID!, id2: ID!): Any!  @auth
 
     VisitUser(id1: ID!, id2: ID!): Any!  @auth
+
+ 
 }
 
 input InputLogin{

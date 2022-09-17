@@ -16,6 +16,11 @@ func (r *queryResolver) Search(ctx context.Context, keyword string, limit int, o
 	return service.Search(r.DB, ctx, keyword, limit, offset)
 }
 
+// SearchHastag is the resolver for the SearchHastag field.
+func (r *queryResolver) SearchHastag(ctx context.Context, keyword string, limit int, offset int) (*model.Search, error) {
+	return service.SearchHastag(r.DB, ctx, keyword, limit, offset)
+}
+
 // Users is the resolver for the Users field.
 func (r *searchResolver) Users(ctx context.Context, obj *model.Search) ([]*model.User, error) {
 	return service.GetUserSearch(r.DB, ctx, obj)
