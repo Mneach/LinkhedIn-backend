@@ -24,7 +24,7 @@ Update V1.6 (17 September 2022)
 - Add Hastag Table
 - Add CR Fitur Notification(Visit , Follow , Unfollow , Create Post , Comment Post, Reply Comment , Like Post , Like Reply)
 
-Update V1.8 (24 September 2022)
+Update V1.7 (24 September 2022)
 - Add Fitur Real Time Chat (Text , Image)
 - Add Fitur send message via profile user
 - Implement Block User to fitur chat (user blocked = cannot chat)
