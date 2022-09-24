@@ -66,6 +66,11 @@ func (r *queryResolver) UserSuggestion(ctx context.Context, userID string) ([]*m
 	return service.GetUserSuggestion(r.DB, ctx, userID)
 }
 
+// UserConnected is the resolver for the UserConnected field.
+func (r *queryResolver) UserConnected(ctx context.Context, userID string) ([]*model.User, error) {
+	return service.UserConnected(r.DB, ctx, userID)
+}
+
 // UserByEmail is the resolver for the UserByEmail field.
 func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
 	return service.GetUserByEmail(r.DB, ctx, email)
@@ -108,7 +113,7 @@ func (r *userResolver) Follows(ctx context.Context, obj *model.User) ([]*model.F
 
 // Blocks is the resolver for the Blocks field.
 func (r *userResolver) Blocks(ctx context.Context, obj *model.User) ([]*model.Block, error) {
-	return service.GetBlocks(r.DB, ctx, obj)
+	return service.GetBlockUsers(r.DB, ctx, obj)
 }
 
 // Connections is the resolver for the Connections field.

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/MneachDev/LinkhedIn-backend/graph/model"
 	"github.com/google/uuid"
@@ -14,6 +15,7 @@ func AddNotification(db *gorm.DB, ctx context.Context, toUserID string, fromUser
 		FromUserID: fromUserID,
 		ToUserID:   toUserID,
 		Message:    message,
+		CreatedAt:  time.Now(),
 	}
 
 	return modelNotification, db.Create(modelNotification).Error
@@ -33,7 +35,7 @@ func GetToUserNotification(db *gorm.DB, ctx context.Context, obj *model.Notifica
 func GetUserNotification(db *gorm.DB, ctx context.Context, toUserID string) ([]*model.Notification, error) {
 	var modelNotifications []*model.Notification
 
-	if err := db.Find(&modelNotifications, "to_user_id = ?", toUserID).Error; err != nil {
+	if err := db.Order("created_at desc").Find(&modelNotifications, "to_user_id = ?", toUserID).Error; err != nil {
 		return nil, err
 	}
 

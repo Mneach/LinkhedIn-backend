@@ -74,6 +74,7 @@ type InputRegisterUser struct {
 	LastName        string `json:"lastName"`
 	Country         string `json:"country"`
 	City            string `json:"city"`
+	Headline        string `json:"headline"`
 	ProfileImageURL string `json:"profileImageUrl"`
 }
 

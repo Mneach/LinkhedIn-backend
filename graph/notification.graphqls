@@ -1,8 +1,11 @@
+scalar time
+
 type Notification {
     id: ID!
     message: String!
     fromUser: User! @goField(forceResolver: true)
     toUser: User! @goField(forceResolver: true)
+    createdAt: Time!
 }
 
 extend type Query {

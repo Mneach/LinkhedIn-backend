@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/MneachDev/LinkhedIn-backend/authentication"
@@ -48,11 +47,7 @@ func CreatePost(db *gorm.DB, ctx context.Context, input model.InputPost) (*model
 	userIdList = append(userIdList, connetions2Ids...)
 	userIdList = lo.Uniq(userIdList)
 
-	fmt.Println("=====================")
 	for _, userId := range userIdList {
-		fmt.Println("=====================")
-		fmt.Println(userId)
-		fmt.Println("=====================")
 		AddNotification(db, ctx, userId, input.SenderID, "Create A New Post")
 	}
 

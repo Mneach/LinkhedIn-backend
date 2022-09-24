@@ -39,7 +39,7 @@ func RegisterUser(db *gorm.DB, ctx context.Context, input model.InputRegisterUse
 		ProfileImageURL:    input.ProfileImageURL,
 		BackgroundImageURL: "",
 		Pronouns:           "",
-		Headline:           "",
+		Headline:           input.Headline,
 		About:              "",
 		Country:            input.Country,
 		City:               input.City,
@@ -125,7 +125,7 @@ func DeleteUser(db *gorm.DB, ctx context.Context, id string) (*model.User, error
 
 func GetUser(db *gorm.DB, ctx context.Context, id string) (*model.User, error) {
 	modelUser := new(model.User)
-	return modelUser, db.First(modelUser, "id = ?", id).Error
+	return modelUser, db.Find(&modelUser, "id = ?", id).Error
 }
 
 func GetUsers(db *gorm.DB, ctx context.Context) ([]*model.User, error) {
@@ -359,10 +359,10 @@ func GetConnectRequests(db *gorm.DB, ctx context.Context, obj *model.User) ([]*m
 	return modelConnectionRequests, nil
 }
 
-func GetBlocks(db *gorm.DB, ctx context.Context, obj *model.User) ([]*model.Block, error) {
+func GetBlockUsers(db *gorm.DB, ctx context.Context, obj *model.User) ([]*model.Block, error) {
 	var modelBlocks []*model.Block
 
-	if err := db.Table("user_blocks").Find(&modelBlocks, "user_id = ?", obj.ID).Error; err != nil {
+	if err := db.Table("user_blocks").Where("user_id = ?", obj.ID).Or("block_id = ?", obj.ID).Find(&modelBlocks).Error; err != nil {
 		return nil, err
 	}
 
@@ -447,6 +447,41 @@ func GetUserSuggestion(db *gorm.DB, ctx context.Context, userID string) ([]*mode
 	}
 
 	if err := db.Find(&modelUsers, finalUserSuggestionId).Error; err != nil {
+		return nil, err
+	}
+
+	return modelUsers, nil
+}
+
+func UserConnected(db *gorm.DB, ctx context.Context, userID string) ([]*model.User, error) {
+	var modelUsers []*model.User
+
+	// CONNECTED USER POST
+	var userIdList []string
+	var connections1 []*model.Connection
+	var connections2 []*model.Connection
+
+	if err := db.Find(&connections1, "user1_id", userID).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Find(&connections2, "user2_id", userID).Error; err != nil {
+		return nil, err
+	}
+
+	connetions1Ids := lo.Map(connections1, func(connectionData *model.Connection, _ int) string {
+		return connectionData.User2ID
+	})
+
+	connetions2Ids := lo.Map(connections2, func(connectionData *model.Connection, _ int) string {
+		return connectionData.User1ID
+	})
+
+	userIdList = append(userIdList, connetions1Ids...)
+	userIdList = append(userIdList, connetions2Ids...)
+	userIdList = lo.Uniq(userIdList)
+
+	if err := db.Find(&modelUsers, userIdList).Error; err != nil {
 		return nil, err
 	}
 

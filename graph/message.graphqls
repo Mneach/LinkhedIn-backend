@@ -1,0 +1,43 @@
+type Message {
+    id: ID!
+    sender: User! @goField(forceResolver: true)
+    SharePost: Post! @goField(forceResolver: true)
+    ShareProfile: User! @goField(forceResolver: true)
+    VideoCall: VideoCall! @goField(forceResolver: true)
+    text: String!
+    imageUrl: String!
+    createdAt: Time!
+}
+
+type Room {
+    id: ID!
+    user1: User! @goField(forceResolver: true)
+    user2: User! @goField(forceResolver: true)
+    lastMessage: Message @goField(forceResolver: true)
+    messages: [Message!]! @goField(forceResolver: true)
+    createdAt: Time!
+}
+
+type VideoCall {
+    id:ID!
+    title:String!
+    date: String!
+    time:String!
+    duration:String!
+    user1: User! @goField(forceResolver: true)
+    user2: User! @goField(forceResolver: true)
+}
+
+extend type Mutation {
+    addRoom(userId1:ID! , userId2:ID!) : Room!
+    addMessage(senderId:ID! , text:String! , imageUrl:String! , roomId:ID!) : Message!
+    addMessageSharePost(senderId:ID!, roomId:ID!, SharePostId:ID! ) : Message!
+    addMessageShareProfile(senderId:ID!, roomId:ID!, ShareProfileId:ID!) : Message!
+    addMessageVideoCall(senderId:ID!, roomId:ID!, VideoCallId:ID!) : Message!
+    addVideoCall(time:String! , title:ID! , date:String! , duration:String! , userId1:ID! , userId2:ID!): VideoCall!
+}
+
+extend type Query {
+    room(roomId:ID!): Room!
+    rooms(userId:ID!) : [Room!]!
+}

@@ -28,6 +28,9 @@ type User struct {
 	Experiences          []*Experience        `json:"Experiences" gorm:"foreignKey:UserID"`
 	Educations           []*Education         `json:"Educations" gorm:"foreignKey:UserID"`
 	Notification         []*Notification      `json:"Notification" gorm:"foreignKey:FromUserID;foreignKey:ToUserID"`
+	Messages             []*Message           `json:"messages" gorm:"foreignKey:ShareProfileID;foreignKey:SenderID"`
+	Rooms                []*Room              `json:"rooms" gorm:"foreignKey:User1ID;foreignKey:User2ID"`
+	VideoCall            []*VideoCall         `json:"VideoCall" gorm:"foreignKey:User1ID;foreignKey:User2ID"`
 }
 
 type Follow struct {

@@ -13,6 +13,7 @@ type Post struct {
 	Sender    *User      `json:"Sender" gorm:"reference:User"`
 	Likes     []*User    `json:"Likes" gorm:"many2many:like_posts"`
 	Comment   []*Comment `json:"Comment" gorm:"foreignKey:PostID;"`
+	Messages  []*Message `json:"messages" gorm:"foreignKey:SharePostID"`
 }
 
 type LikePosts struct {

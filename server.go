@@ -50,6 +50,9 @@ func main() {
 		&model.Hastag{},
 		&model.Job{},
 		&model.Notification{},
+		&model.Room{},
+		&model.VideoCall{},
+		&model.Message{},
 	)
 
 	router := chi.NewRouter()

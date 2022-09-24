@@ -19,3 +19,8 @@ func (r *mutationResolver) AddBlock(ctx context.Context, userID string, blockID 
 func (r *mutationResolver) DeleteBlock(ctx context.Context, userID string, blockID string) (*model.Block, error) {
 	return service.DeleteBlock(r.DB, ctx, userID, blockID)
 }
+
+// Blocks is the resolver for the blocks field.
+func (r *queryResolver) Blocks(ctx context.Context, userID string) ([]*model.Block, error) {
+	return service.GetBlocks(r.DB, ctx, userID)
+}
