@@ -41,6 +41,11 @@ func (r *postResolver) Comments(ctx context.Context, obj *model.Post) ([]*model.
 	return service.GetComments(r.DB, ctx, obj)
 }
 
+// Shares is the resolver for the Shares field.
+func (r *postResolver) Shares(ctx context.Context, obj *model.Post) (int, error) {
+	return service.GetTotalShares(r.DB, ctx, obj)
+}
+
 // Posts is the resolver for the Posts field.
 func (r *queryResolver) Posts(ctx context.Context, limit int, offset int) ([]*model.Post, error) {
 	return service.GetPosts(r.DB, ctx, limit, offset)

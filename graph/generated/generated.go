@@ -220,6 +220,7 @@ type ComplexityRoot struct {
 		Likes     func(childComplexity int) int
 		PhotoUrl  func(childComplexity int) int
 		Sender    func(childComplexity int) int
+		Shares    func(childComplexity int) int
 		Text      func(childComplexity int) int
 		VideoUrl  func(childComplexity int) int
 	}
@@ -377,6 +378,7 @@ type PostResolver interface {
 	Sender(ctx context.Context, obj *model.Post) (*model.User, error)
 	Likes(ctx context.Context, obj *model.Post) ([]*model.LikePosts, error)
 	Comments(ctx context.Context, obj *model.Post) ([]*model.Comment, error)
+	Shares(ctx context.Context, obj *model.Post) (int, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id string) (*model.User, error)
@@ -1437,6 +1439,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Sender(childComplexity), true
 
+	case "Post.Shares":
+		if e.complexity.Post.Shares == nil {
+			break
+		}
+
+		return e.complexity.Post.Shares(childComplexity), true
+
 	case "Post.text":
 		if e.complexity.Post.Text == nil {
 			break
@@ -2320,6 +2329,7 @@ type Post{
     Sender: User! @goField(forceResolver: true)
     Likes: [LikePosts!]! @goField(forceResolver: true)
     Comments: [Comment!]! @goField(forceResolver: true)
+    Shares: Int! @goField(forceResolver: true)
 }
 
 type LikePosts {
@@ -7058,6 +7068,8 @@ func (ec *executionContext) fieldContext_Message_SharePost(ctx context.Context, 
 				return ec.fieldContext_Post_Likes(ctx, field)
 			case "Comments":
 				return ec.fieldContext_Post_Comments(ctx, field)
+			case "Shares":
+				return ec.fieldContext_Post_Shares(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -9820,6 +9832,8 @@ func (ec *executionContext) fieldContext_Mutation_CreatePost(ctx context.Context
 				return ec.fieldContext_Post_Likes(ctx, field)
 			case "Comments":
 				return ec.fieldContext_Post_Comments(ctx, field)
+			case "Shares":
+				return ec.fieldContext_Post_Shares(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -10725,6 +10739,50 @@ func (ec *executionContext) fieldContext_Post_Comments(ctx context.Context, fiel
 				return ec.fieldContext_Comment_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Comment", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Post_Shares(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Post_Shares(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Post().Shares(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Post_Shares(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Post",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12452,6 +12510,8 @@ func (ec *executionContext) fieldContext_Query_Posts(ctx context.Context, field 
 				return ec.fieldContext_Post_Likes(ctx, field)
 			case "Comments":
 				return ec.fieldContext_Post_Comments(ctx, field)
+			case "Shares":
+				return ec.fieldContext_Post_Shares(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -13377,6 +13437,8 @@ func (ec *executionContext) fieldContext_Search_Posts(ctx context.Context, field
 				return ec.fieldContext_Post_Likes(ctx, field)
 			case "Comments":
 				return ec.fieldContext_Post_Comments(ctx, field)
+			case "Shares":
+				return ec.fieldContext_Post_Shares(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -18704,6 +18766,26 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._Post_Comments(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "Shares":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Post_Shares(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

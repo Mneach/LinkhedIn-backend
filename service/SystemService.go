@@ -83,13 +83,13 @@ func Search(db *gorm.DB, ctx context.Context, keyword string, limit int, offset 
 	var modelPosts []*model.Post
 
 	// SEARCH USER BY KEYWORD
-	if err := db.Limit(limit).Offset(offset).Not("id = ?", userID).Find(&modelUsers, "concat(first_name, last_name) like ?", "%"+keyword+"%").Error; err != nil {
+	if err := db.Not("id = ?", userID).Find(&modelUsers, "concat(first_name, last_name) like ?", "%"+keyword+"%").Error; err != nil {
 		return nil, err
 	}
 
 	// SEARCH POSTS BY KEYWOARD
 
-	if err := db.Limit(limit).Offset(offset).Find(&modelPosts, "text like ? ", "%"+keyword+"%").Error; err != nil {
+	if err := db.Limit(limit).Offset(offset).Order("created_at desc").Find(&modelPosts, "text like ? ", "%"+keyword+"%").Error; err != nil {
 		return nil, err
 	}
 
@@ -106,7 +106,7 @@ func SearchHastag(db *gorm.DB, ctx context.Context, keyword string, limit int, o
 
 	// SEARCH POSTS BY KEYWOARD
 
-	if err := db.Limit(limit).Offset(offset).Find(&modelPosts, "text like ? ", "%#"+keyword+"%").Error; err != nil {
+	if err := db.Limit(limit).Offset(offset).Order("created_at desc").Find(&modelPosts, "text like ? ", "%#"+keyword+"%").Error; err != nil {
 		return nil, err
 	}
 
@@ -144,7 +144,7 @@ func GetPostSearch(db *gorm.DB, ctx context.Context, obj *model.Search) ([]*mode
 		return posts, nil
 	}
 
-	if err := db.Find(&posts, postIds).Error; err != nil {
+	if err := db.Order("created_at desc").Find(&posts, postIds).Error; err != nil {
 		return nil, err
 	}
 

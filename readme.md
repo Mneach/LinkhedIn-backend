@@ -35,3 +35,13 @@ Update V1.7 (24 September 2022)
 - Add Fitur To Create Schedule Video Call
 - Implement Block User to all share fitur
 - Add Fitur Save As Pdf
+
+Update V1.8 (25 September 2022)
+- Fix Modal More In Profile Page
+- Fix Bug Infinite Scrolling 
+- Fix Bug Comment Component
+- Fix Bug Rich Text Hastag
+- Add Footer In Main page
+- Add Loading Animation When Infinite Scrolling Is Fetching The Next Post
+- Make Order By Created At In Query Post
+- Show Total Post Shares In Post Component

@@ -143,3 +143,13 @@ func GetComments(db *gorm.DB, ctx context.Context, obj *model.Post) ([]*model.Co
 
 	return modelComment, nil
 }
+
+func GetTotalShares(db *gorm.DB, ctx context.Context, obj *model.Post) (int, error) {
+	var modelShare []*model.Message
+
+	if err := db.Find(&modelShare, "share_post_id = ?", obj.ID).Error; err != nil {
+		return 0, err
+	}
+
+	return len(modelShare), nil
+}

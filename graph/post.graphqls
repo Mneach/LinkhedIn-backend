@@ -9,6 +9,7 @@ type Post{
     Sender: User! @goField(forceResolver: true)
     Likes: [LikePosts!]! @goField(forceResolver: true)
     Comments: [Comment!]! @goField(forceResolver: true)
+    Shares: Int! @goField(forceResolver: true)
 }
 
 type LikePosts {
