@@ -43,5 +43,6 @@ Update V1.8 (25 September 2022)
 - Fix Bug Rich Text Hastag
 - Add Footer In Main page
 - Add Loading Animation When Infinite Scrolling Is Fetching The Next Post
-- Make Order By Created At In Query Post
+- Make Order By Created At In Query Search
 - Show Total Post Shares In Post Component
+- Add Infinite Scrolling To Search Page
