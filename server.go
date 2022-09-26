@@ -28,7 +28,7 @@ func main() {
 	}
 
 	// dsn := "host=localhost user=postgres password=mysecretpassword dbname=LinkhedIn port=12345 sslmode=disable TimeZone=Asia/Shanghai"
-	dsn := "host=localhost user=postgres password=admin dbname=LinkhedIn port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "host=database user=postgres password=postgres dbname=LinkhedIn port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 

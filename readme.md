@@ -49,3 +49,6 @@ Update V1.8 (25 September 2022)
 
 Update V1.9 (26 September 2022)
 - Add Dark Theme and Light Theme
+
+Update V2.0 (26 September 2022)
+- Docker Setting
