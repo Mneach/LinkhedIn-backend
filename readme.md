@@ -46,3 +46,6 @@ Update V1.8 (25 September 2022)
 - Make Order By Created At In Query Search
 - Show Total Post Shares In Post Component
 - Add Infinite Scrolling To Search Page
+
+Update V1.9 (26 September 2022)
+- Add Dark Theme and Light Theme
